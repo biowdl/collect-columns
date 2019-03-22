@@ -1,0 +1,34 @@
+# stringtie --merge -o /exports/sasc-testing/workspace/biowdl/github/expression-quantification/fix_mergecounts/1/guided_with_novel_with_additional_attributes/test-output/stringtie/assembly//merged.gtf -G /cromwell-executions/MultiBamExpressionQuantification/aa916d2b-3de4-42d2-9e87-a2495522f278/call-mergeStringtieGtf/inputs/1447544885/reference.gtf /cromwell-executions/MultiBamExpressionQuantification/aa916d2b-3de4-42d2-9e87-a2495522f278/call-mergeStringtieGtf/inputs/674539078/sample1.gtf /cromwell-executions/MultiBamExpressionQuantification/aa916d2b-3de4-42d2-9e87-a2495522f278/call-mergeStringtieGtf/inputs/674539078/sample2.gtf
+# StringTie version 1.3.4d
+chr1	StringTie	transcript	2000	5000	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_2"; ref_gene_id "g_1"; gene_name "gene_1";
+chr1	StringTie	exon	2000	2500	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_2"; exon_number "1"; ref_gene_id "g_1"; gene_name "gene_1";
+chr1	StringTie	exon	3000	3250	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_2"; exon_number "2"; ref_gene_id "g_1"; gene_name "gene_1";
+chr1	StringTie	exon	4500	5000	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_2"; exon_number "3"; ref_gene_id "g_1"; gene_name "gene_1";
+chr1	StringTie	transcript	2000	5000	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_1"; ref_gene_id "g_7"; gene_name "gene_7";
+chr1	StringTie	exon	2000	2500	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_1"; exon_number "1"; ref_gene_id "g_7"; gene_name "gene_7";
+chr1	StringTie	exon	3500	3750	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_1"; exon_number "2"; ref_gene_id "g_7"; gene_name "gene_7";
+chr1	StringTie	exon	4500	5000	1000	+	.	gene_id "MSTRG.1"; transcript_id "t_1_1"; exon_number "3"; ref_gene_id "g_7"; gene_name "gene_7";
+chr1	StringTie	transcript	7000	10000	1000	-	.	gene_id "MSTRG.2"; transcript_id "t_2_1"; ref_gene_id "g_2";  gene_name "gene_2";
+chr1	StringTie	exon	7000	7500	1000	-	.	gene_id "MSTRG.2"; transcript_id "t_2_1"; exon_number "1"; ref_gene_id "g_2"; gene_name "gene_2";
+chr1	StringTie	exon	8500	8750	1000	-	.	gene_id "MSTRG.2"; transcript_id "t_2_1"; exon_number "2"; ref_gene_id "g_2"; gene_name "gene_2";
+chr1	StringTie	exon	9500	10000	1000	-	.	gene_id "MSTRG.2"; transcript_id "t_2_1"; exon_number "3"; ref_gene_id "g_2"; gene_name "gene_2";
+chr1	StringTie	transcript	9500	12500	1000	+	.	gene_id "MSTRG.3"; transcript_id "t_3_1"; ref_gene_id "g_3"; gene_name "gene_3";
+chr1	StringTie	exon	9500	10000	1000	+	.	gene_id "MSTRG.3"; transcript_id "t_3_1"; exon_number "1"; ref_gene_id "g_3"; gene_name "gene_3";
+chr1	StringTie	exon	11000	11500	1000	+	.	gene_id "MSTRG.3"; transcript_id "t_3_1"; exon_number "2"; ref_gene_id "g_3"; gene_name "gene_3";
+chr1	StringTie	exon	12000	12500	1000	+	.	gene_id "MSTRG.3"; transcript_id "t_3_1"; exon_number "3"; ref_gene_id "g_3"; gene_name "gene_3";
+chrM	StringTie	transcript	2000	5000	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_2"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	2000	2500	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_2"; exon_number "1"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	3000	3250	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_2"; exon_number "2"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	4500	5000	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_2"; exon_number "3"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	transcript	2000	5000	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_1"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	2000	2500	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_1"; exon_number "1"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	3500	3750	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_1"; exon_number "2"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	exon	4500	5000	1000	-	.	gene_id "MSTRG.4"; transcript_id "t_4_1"; exon_number "3"; ref_gene_id "g_4"; gene_name "gene_4";
+chrM	StringTie	transcript	7000	10000	1000	+	.	gene_id "MSTRG.5"; transcript_id "t_5_1"; ref_gene_id "g_5"; gene_name "gene_5";
+chrM	StringTie	exon	7000	7500	1000	+	.	gene_id "MSTRG.5"; transcript_id "t_5_1"; exon_number "1"; ref_gene_id "g_5"; gene_name "gene_5";
+chrM	StringTie	exon	8500	8750	1000	+	.	gene_id "MSTRG.5"; transcript_id "t_5_1"; exon_number "2"; ref_gene_id "g_5"; gene_name "gene_5";
+chrM	StringTie	exon	9500	10000	1000	+	.	gene_id "MSTRG.5"; transcript_id "t_5_1"; exon_number "3"; ref_gene_id "g_5"; gene_name "gene_5";
+chrM	StringTie	transcript	9500	12500	1000	-	.	gene_id "MSTRG.6"; transcript_id "t_6_1"; ref_gene_id "g_6"; gene_name "gene_6";
+chrM	StringTie	exon	9500	10000	1000	-	.	gene_id "MSTRG.6"; transcript_id "t_6_1"; exon_number "1"; ref_gene_id "g_6"; gene_name "gene_6";
+chrM	StringTie	exon	11000	11500	1000	-	.	gene_id "MSTRG.6"; transcript_id "t_6_1"; exon_number "2"; ref_gene_id "g_6"; gene_name "gene_6";
+chrM	StringTie	exon	12000	12500	1000	-	.	gene_id "MSTRG.6"; transcript_id "t_6_1"; exon_number "3"; ref_gene_id "g_6"; gene_name "gene_6";

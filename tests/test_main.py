@@ -9,8 +9,6 @@ from mergecounts.mergecounts import main, parse_args
 
 datadir = Path(__file__).parent / Path("data")
 
-# -a, but no -g
-
 
 def test_main_htseq(tmpdir):
     tables = [

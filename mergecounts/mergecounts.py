@@ -59,7 +59,7 @@ def add_additional_attributes(counts_table, gtf, feature_attribute,
     attributes which will be added to the table.
     """
     # Add columns for the additional attributes to the counts table.
-    for attribute in additional_attributes:
+    for attribute in additional_attributes[::-1]:
         counts_table.insert(0, attribute, None)
     # For each record in the GTF/GFF
     in_file = open(gtf)

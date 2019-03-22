@@ -32,6 +32,6 @@ def test_add_additional_attributes():
         "sample1.fragments_per_gene": [2371, 381, 741, 2361, 382, 706, 0,
                                        2995, 0, 5, 131]
     }).set_index("feature")
-    assert expected_result.equals(
-        add_additional_attributes(count_table, gtf, "gene_id",
-                                  ["ref_gene_id", "gene_name"]))
+    result = add_additional_attributes(count_table, gtf, "gene_id",
+                              ["ref_gene_id", "gene_name"])
+    assert result.equals(expected_result)

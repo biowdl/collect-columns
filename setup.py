@@ -17,3 +17,34 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+from setuptools import setup
+
+with open("README.rst", "r") as readme_file:
+LONG_DESCRIPTION = readme_file.read()
+
+setup(name="mergecounts",
+      version="0.1-dev-alpha-testy_mctestington",
+      description="Merges counts tables from muliple samples.",
+      long_description=LONG_DESCRIPTION,
+      classifiers=[
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+      ],
+      keywords="bioinformatics",
+      url="https://git.lumc.nl/dcats/mergecounts",
+      author="Leiden University Medical Center",
+      author_email="sasc@lumc.nl",
+      license="MIT",
+      packages=["mergecounts"],
+      install_requires=[
+        "pandas>=0.23",
+        "bcbio-gff",
+        "biopython" #Required for bcbio-gff
+      ],
+      scripts=["mergecounts/mergecounts.py"])

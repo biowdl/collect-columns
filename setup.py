@@ -20,8 +20,8 @@
 
 from setuptools import setup
 
-with open("README.rst", "r") as readme_file:
-LONG_DESCRIPTION = readme_file.read()
+with open("README.md", "r") as readme_file:
+    LONG_DESCRIPTION = readme_file.read()
 
 setup(name="mergecounts",
       version="0.1-dev-alpha-testy_mctestington",

@@ -122,8 +122,8 @@ def parse_args(argv):
                         metavar="I",
                         help="The position of the column with the "
                         "values of interest. Defaults to 1.")
-    parser.add_argument("-s", "--sep", "--seperator", type=str, default="\t",
-                        help="The seperator used in the tables. This "
+    parser.add_argument("-s", "--sep", "--separator", type=str, default="\t",
+                        help="The separator used in the tables. This "
                         "will also be used in the output table. "
                         "Defaults to a tab.")
     parser.add_argument("-n", "--names", type=str, nargs="*", metavar="NAME",
@@ -141,7 +141,7 @@ def parse_args(argv):
                         "to the merged count table. These attributes "
                         "will be retrieved from the GTF or GFF file "
                         "specified with the -g option. Multiple values "
-                        "will be seperated by a ';'. Requires -g to be "
+                        "will be separator by a ';'. Requires -g to be "
                         "specified.")
     parser.add_argument("-g", "--gtf", "--gff", type=str, metavar="FILE",
                         help="The GTF or GFF file from which the "

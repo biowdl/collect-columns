@@ -6,4 +6,4 @@ mergecounts.egg-info/
 docs/_build/
 venv/
 .idea/
-
+.tox

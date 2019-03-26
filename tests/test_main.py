@@ -43,7 +43,7 @@ def test_main_htseq(tmpdir):
         "s1": [2371, 381, 741, 2361, 382, 706, 0,
                                        2995, 0, 5, 131],
         "s2": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
-    })
+    }, columns=["feature", "s1", "s2"])
     output_file = tmpdir.join("output.tsv")
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-n", "s1",
                 "s2"]
@@ -66,7 +66,8 @@ def test_main_stringtie(tmpdir):
                               184648.109375, 104290.078125, 89926.898438],
         "sample2.abundance": [85151.953125, 160.070312, 1229.078125,
                               84648.109375, 4290.078125, 9926.898438],
-    }, )
+    }, columns=["feature", "ref_gene_id", "gene_name", "sample1.abundance",
+                "sample2.abundance"])
     output_file = tmpdir.join("output.tsv")
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-c", "7",
                 "-H", "-g", gtf, "-a", "ref_gene_id", "gene_name"]
@@ -87,7 +88,8 @@ def test_main_semicolon(tmpdir):
                     "MSTRG.6"],
         "sample1.csv": [1, 2, 3, 4, 5, np.nan],
         "sample2.csv": [10, 20, 30, 40, np.nan, 60],
-    }, )
+    }, columns=["feature", "ref_gene_id", "gene_id", "sample1.csv",
+                "sample2.csv"])
     output_file = tmpdir.join("output.tsv")
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-f", "1",
                 "-c", "0", "-s", ";", "-H", "-g", gtf, "-a", "ref_gene_id",
@@ -102,7 +104,8 @@ def test_parse_args_a_but_no_g(capsys):
         sys.argv = ["script", "output", "input", "-a", "attribute"]
         parse_args()
     stderr = capsys.readouterr().err
-    assert ("the following argument is required if -a is specified: -g" ==
+    assert (
+        "the following argument is required if -a is specified: -g" ==
         stderr[-58:-1])
 
 

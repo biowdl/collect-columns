@@ -20,14 +20,14 @@
 
 import argparse
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from BCBio import GFF
 import pandas as pd
 
 
 def mergecounts(count_tables: List[Path], feature_column: int,
-                counts_column: int, sep: str, names: List[str],
+                counts_column: int, sep: str, names: Optional[List[str]],
                 tables_have_headers: bool) -> pd.DataFrame:
     """
     Merge a set of count tables.
@@ -114,8 +114,9 @@ def main():
                                       args.counts_column, args.sep, args.names,
                                       args.header)
     if args.additional_attributes is not None:
-        merged_counts_table = add_additional_attributes(merged_counts_table,
-            args.gtf, args.feature_attribute, args.additional_attributes)
+        merged_counts_table = add_additional_attributes(
+            merged_counts_table, args.gtf, args.feature_attribute,
+            args.additional_attributes)
     merged_counts_table.to_csv(args.output, sep=args.sep)
 
 
@@ -135,43 +136,43 @@ def parse_args():
     parser.add_argument("-f", "--feature-column", type=int, default=0,
                         metavar="I",
                         help="The position of the column with the "
-                        "(unique) feature ids. Default to 0.")
+                             "(unique) feature ids. Default to 0.")
     parser.add_argument("-c", "--counts-column", type=int, default=1,
                         metavar="I",
                         help="The position of the column with the "
-                        "values of interest. Defaults to 1.")
+                             "values of interest. Defaults to 1.")
     parser.add_argument("-s", "--sep", "--separator", type=str, default="\t",
                         help="The separator used in the tables. This "
-                        "will also be used in the output table. "
-                        "Defaults to a tab.")
+                             "will also be used in the output table. "
+                             "Defaults to a tab.")
     parser.add_argument("-n", "--names", type=str, nargs="*", metavar="NAME",
                         help="The names of the samples corresponding "
-                        "to the tables (in the same order as the "
-                        "tables). These will be used as headers in the "
-                        "merged table. If not specified the basenames "
-                        "of tables will be used.")
+                             "to the tables (in the same order as the "
+                             "tables). These will be used as headers in the "
+                             "merged table. If not specified the basenames "
+                             "of tables will be used.")
     parser.add_argument("-H", "--header", action='store_true',
                         help="Whether or not the tables have a header. "
-                        "Defaults to false.")
+                             "Defaults to false.")
     parser.add_argument("-a", "--additional-attributes", type=str, nargs="+",
                         metavar="ATTR",
                         help="A list of attributes which will be added "
-                        "to the merged count table. These attributes "
-                        "will be retrieved from the GTF or GFF file "
-                        "specified with the -g option. Multiple values "
-                        "will be separator by a ';'. Requires -g to be "
-                        "specified.")
+                             "to the merged count table. These attributes "
+                             "will be retrieved from the GTF or GFF file "
+                             "specified with the -g option. Multiple values "
+                             "will be separator by a ';'. Requires -g to be "
+                             "specified.")
     parser.add_argument("-g", "--gtf", "--gff", type=Path, metavar="FILE",
                         help="The GTF or GFF file from which the "
-                        "additional attributes (see -a) will be "
-                        "retrieved. Ignored if -a is not specified. "
-                        "Required if -a is specified.")
+                             "additional attributes (see -a) will be "
+                             "retrieved. Ignored if -a is not specified. "
+                             "Required if -a is specified.")
     parser.add_argument("-F", "--feature-attribute", type=str, metavar="ATTR",
                         default="gene_id",
                         help="The attribute from the GTF/GFF used for "
-                        "matching the feature records with the rows in "
-                        "the count table. Ignored if -a is not "
-                        "specified. Defaults to 'gene_id'.")
+                             "matching the feature records with the rows in "
+                             "the count table. Ignored if -a is not "
+                             "specified. Defaults to 'gene_id'.")
     args = parser.parse_args()
     if args.additional_attributes is not None and args.gtf is None:
         parser.error("the following argument is required if -a is "

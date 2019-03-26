@@ -3,3 +3,7 @@ __pycache__/
 .coverage
 cov_html/
 mergecounts.egg-info/
+docs/_build/
+venv/
+.idea/
+

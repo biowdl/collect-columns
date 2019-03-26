@@ -24,7 +24,7 @@ with open("README.md", "r") as readme_file:
     LONG_DESCRIPTION = readme_file.read()
 
 setup(name="mergecounts",
-      version="0.1-dev-alpha-testy_mctestington",
+      version="0.1-dev",
       description="Merges counts tables from muliple samples.",
       long_description=LONG_DESCRIPTION,
       classifiers=[

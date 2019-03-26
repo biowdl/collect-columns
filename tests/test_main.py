@@ -20,6 +20,7 @@
 
 
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
@@ -32,10 +33,8 @@ datadir = Path(__file__).parent / Path("data")
 
 
 def test_main_htseq(tmpdir):
-    tables = [
-        datadir / Path("htseq") / Path("sample1.fragments_per_gene").__str__(),
-        datadir / Path("htseq") / Path("sample2.fragments_per_gene").__str__()
-    ]
+    sample1 = str(datadir / Path("htseq") / Path("sample1.fragments_per_gene"))
+    sample2 = str(datadir / Path("htseq") / Path("sample2.fragments_per_gene"))
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
                     "MSTRG.6", "__no_feature", "__ambiguous",
@@ -46,18 +45,17 @@ def test_main_htseq(tmpdir):
         "s2": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
     })
     output_file = tmpdir.join("output.tsv")
-    main(tables, output_file.strpath, 0, 1, "\t", ["s1", "s2"], False, None,
-         None, None)
+    sys.argv = ["script", output_file.strpath, sample1, sample2, "-n", "s1",
+                "s2"]
+    main()
     result = pd.read_csv(output_file, sep="\t")
     assert result.equals(expected_result)
 
 
 def test_main_stringtie(tmpdir):
-    tables = [
-        datadir / Path("stringtie") / Path("sample1.abundance").__str__(),
-        datadir / Path("stringtie") / Path("sample2.abundance").__str__()
-    ]
-    gtf = datadir / Path("merged.gtf").__str__()
+    sample1 = str(datadir / Path("stringtie") / Path("sample1.abundance"))
+    sample2 = str(datadir / Path("stringtie") / Path("sample2.abundance"))
+    gtf = str(datadir / Path("merged.gtf"))
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
                     "MSTRG.6"],
@@ -70,18 +68,17 @@ def test_main_stringtie(tmpdir):
                               84648.109375, 4290.078125, 9926.898438],
     }, )
     output_file = tmpdir.join("output.tsv")
-    main(tables, output_file.strpath, 0, 7, "\t", None, True, gtf,
-         ["ref_gene_id", "gene_name"], "gene_id")
+    sys.argv = ["script", output_file.strpath, sample1, sample2, "-c", "7",
+                "-H", "-g", gtf, "-a", "ref_gene_id", "gene_name"]
+    main()
     result = pd.read_csv(output_file, sep="\t")
     assert result.equals(expected_result)
 
 
 def test_main_semicolon(tmpdir):
-    tables = [
-        datadir / Path("semicolon") / Path("sample1.csv").__str__(),
-        datadir / Path("semicolon") / Path("sample2.csv").__str__()
-    ]
-    gtf = datadir / Path("merged.gtf").__str__()
+    sample1 = str(datadir / Path("semicolon") / Path("sample1.csv"))
+    sample2 = str(datadir / Path("semicolon") / Path("sample2.csv"))
+    gtf = str(datadir / Path("merged.gtf"))
     expected_result = pd.DataFrame(data={
         "feature": ["gene_1", "gene_2", "gene_3", "gene_4", "gene_5",
                     "gene_6"],
@@ -92,21 +89,28 @@ def test_main_semicolon(tmpdir):
         "sample2.csv": [10, 20, 30, 40, np.nan, 60],
     }, )
     output_file = tmpdir.join("output.tsv")
-    main(tables, output_file.strpath, 1, 0, ";", None, True, gtf,
-         ["ref_gene_id", "gene_id"], "gene_name")
+    sys.argv = ["script", output_file.strpath, sample1, sample2, "-f", "1",
+                "-c", "0", "-s", ";", "-H", "-g", gtf, "-a", "ref_gene_id",
+                "gene_id", "-F", "gene_name"]
+    main()
     result = pd.read_csv(output_file, sep=";")
     assert result.equals(expected_result)
 
 
-def test_parse_args_a_but_no_g():
+def test_parse_args_a_but_no_g(capsys):
     with pytest.raises(SystemExit):
-        parse_args(["output", "input", "-a", "attribute"])
+        sys.argv = ["script", "output", "input", "-a", "attribute"]
+        parse_args()
+    stderr = capsys.readouterr().err
+    assert ("the following argument is required if -a is specified: -g" ==
+        stderr[-58:-1])
 
 
 def test_parse_args_defaults():
-    args = parse_args(["output", "input"])
-    assert args.table == ["input"]
-    assert args.output == "output"
+    sys.argv = ["script", "output", "input"]
+    args = parse_args()
+    assert args.table == [Path("input")]
+    assert args.output == Path("output")
     assert args.feature_column == 0
     assert args.counts_column == 1
     assert args.sep == "\t"

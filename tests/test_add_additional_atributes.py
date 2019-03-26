@@ -31,7 +31,7 @@ datadir = Path(__file__).parent / Path("data")
 
 
 def test_add_additional_attributes():
-    gtf = datadir / Path("merged.gtf").__str__()
+    gtf = datadir / Path("merged.gtf")
     count_table = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
                     "MSTRG.6", "__no_feature", "__ambiguous",

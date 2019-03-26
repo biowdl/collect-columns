@@ -32,8 +32,8 @@ datadir = Path(__file__).parent / Path("data")
 
 def test_mergecounts_htseq():
     tables = [
-        datadir / Path("htseq") / Path("sample1.fragments_per_gene").__str__(),
-        datadir / Path("htseq") / Path("sample2.fragments_per_gene").__str__()
+        str(datadir / Path("htseq") / Path("sample1.fragments_per_gene")),
+        str(datadir / Path("htseq") / Path("sample2.fragments_per_gene"))
     ]
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
@@ -50,8 +50,8 @@ def test_mergecounts_htseq():
 
 def test_mergecounts_htseq_with_names():
     tables = [
-        datadir / Path("htseq") / Path("sample1.fragments_per_gene").__str__(),
-        datadir / Path("htseq") / Path("sample2.fragments_per_gene").__str__()
+        str(datadir / Path("htseq") / Path("sample1.fragments_per_gene")),
+        str(datadir / Path("htseq") / Path("sample2.fragments_per_gene"))
     ]
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
@@ -67,8 +67,8 @@ def test_mergecounts_htseq_with_names():
 
 def test_mergecounts_stringtie():
     tables = [
-        datadir / Path("stringtie") / Path("sample1.abundance").__str__(),
-        datadir / Path("stringtie") / Path("sample2.abundance").__str__()
+        str(datadir / Path("stringtie") / Path("sample1.abundance")),
+        str(datadir / Path("stringtie") / Path("sample2.abundance"))
     ]
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
@@ -84,8 +84,8 @@ def test_mergecounts_stringtie():
 
 def test_mergecounts_stringtie_with_names():
     tables = [
-        datadir / Path("stringtie") / Path("sample1.abundance").__str__(),
-        datadir / Path("stringtie") / Path("sample2.abundance").__str__()
+        str(datadir / Path("stringtie") / Path("sample1.abundance")),
+        str(datadir / Path("stringtie") / Path("sample2.abundance"))
     ]
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
@@ -101,8 +101,8 @@ def test_mergecounts_stringtie_with_names():
 
 def test_mergecounts_semicolon():
     tables = [
-        datadir / Path("semicolon") / Path("sample1.csv").__str__(),
-        datadir / Path("semicolon") / Path("sample2.csv").__str__()
+        str(datadir / Path("semicolon") / Path("sample1.csv")),
+        str(datadir / Path("semicolon") / Path("sample2.csv"))
     ]
     expected_result = pd.DataFrame(data={
         "feature": ["gene_1", "gene_2", "gene_3", "gene_4", "gene_5",

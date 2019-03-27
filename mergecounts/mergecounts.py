@@ -88,19 +88,18 @@ def add_additional_attributes(counts_table: pd.DataFrame, gtf: Path,
         for i, rec in enumerate(GFF.parse_simple(in_file)):
             attributes = rec["quals"]
             # for each value of the attribute signifying the feature/gene
-            for gene in attributes.get(feature_attribute, []):
-                # if the gene is present in the count table
-                if gene in counts_table.index:
-                    # for each of the additional attributes
-                    for attribute in additional_attributes:
-                        # and for each of their values
-                        for value in attributes.get(attribute, []):
-                            # make sure the appropriate column contains a list
-                            if counts_table[attribute][gene] is None:
-                                counts_table.at[gene, attribute] = []
-                            # and add the value if it isn't present already.
-                            if value not in counts_table[attribute][gene]:
-                                counts_table.at[gene, attribute].append(value)
+            gene_ids = (gene for gene in attributes.get(feature_attribute, [])
+                        if gene in counts_table.index)
+            for gene in gene_ids:
+                for attribute in additional_attributes:
+                    # and for each of their values
+                    for value in attributes.get(attribute, []):
+                        # make sure the appropriate column contains a list
+                        if counts_table[attribute][gene] is None:
+                            counts_table.at[gene, attribute] = [value]
+                        # and add the value if it isn't present already.
+                        elif value not in counts_table[attribute][gene]:
+                            counts_table.at[gene, attribute].append(value)
     # Reformat the retrieved attributes into strings
     for attribute in additional_attributes:
         counts_table[attribute] = counts_table[attribute].apply(

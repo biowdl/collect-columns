@@ -1,24 +1,25 @@
 before_script:
   - pip install pytest
+  - pip install tox
   - pip install -r requirements.txt
 
 test3.5:
   image: python:3.5-stretch
   script:
-    - pytest
+    - tox -e py35
   tags:
     - docker
 
 test3.6:
   image: python:3.6-stretch
   script:
-    - pytest
+    - tox -e py36
   tags:
     - docker
 
 test3.7:
   image: python:3.7-stretch
   script:
-    - pytest
+    - tox -e py37
   tags:
     - docker

@@ -7,8 +7,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -52,5 +52,5 @@ def test_add_additional_attributes():
     }, columns=["feature", "ref_gene_id", "gene_name",
                 "sample1.fragments_per_gene"]).set_index("feature")
     result = add_additional_attributes(count_table, gtf, "gene_id",
-                              ["ref_gene_id", "gene_name"])
+                                       ["ref_gene_id", "gene_name"])
     assert result.equals(expected_result)

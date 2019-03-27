@@ -7,8 +7,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -45,7 +45,7 @@ def mergecounts(count_tables: List[Path], feature_column: int,
     """
     # If no sample names are given use table basenames instead.
     if names is None:
-        names = [Path(path).name for path in count_tables]
+        names = [path.name for path in count_tables]
     # Convert tables_have_headers to conform with the pandas parameter.
     header = 0 if tables_have_headers else None
     # Load in the first table.

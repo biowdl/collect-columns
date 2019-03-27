@@ -7,8 +7,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -40,8 +40,7 @@ def test_main_htseq(tmpdir):
                     "MSTRG.6", "__no_feature", "__ambiguous",
                     "__too_low_aQual", "__not_aligned",
                     "__alignment_not_unique"],
-        "s1": [2371, 381, 741, 2361, 382, 706, 0,
-                                       2995, 0, 5, 131],
+        "s1": [2371, 381, 741, 2361, 382, 706, 0, 2995, 0, 5, 131],
         "s2": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
     }, columns=["feature", "s1", "s2"])
     output_file = tmpdir.join("output.tsv")
@@ -117,8 +116,8 @@ def test_parse_args_defaults():
     assert args.feature_column == 0
     assert args.counts_column == 1
     assert args.sep == "\t"
-    assert args.names == None
-    assert args.header == False
-    assert args.gtf == None
-    assert args.additional_attributes == None
+    assert args.names is None
+    assert args.header is False
+    assert args.gtf is None
+    assert args.additional_attributes is None
     assert args.feature_attribute == "gene_id"

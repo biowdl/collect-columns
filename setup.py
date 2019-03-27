@@ -49,5 +49,5 @@ setup(name="mergecounts",
         "biopython" #Required for bcbio-gff
       ],
       entry_points={
-          'console_scripts': ['mergecounts=mergecounts:main'],
+          'console_scripts': ['mergecounts=mergecounts.mergecounts:main'],
       })

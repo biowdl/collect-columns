@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mergecounts import main, parse_args
+from mergecounts.mergecounts import main, parse_args
 
 
 datadir = Path(__file__).parent / Path("data")

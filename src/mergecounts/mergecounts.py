@@ -80,30 +80,23 @@ def add_additional_attributes(counts_table: pd.DataFrame, gtf: Path,
     :param additional_attributes: A list containing the keys of the
     attributes which will be added to the table.
     """
-    # Add columns for the additional attributes to the counts table.
-    for attribute in additional_attributes[::-1]:
-        counts_table.insert(0, attribute, None)
-    # For each record in the GTF/GFF
+    features_list = {feature: {attr: set() for attr in additional_attributes}
+                     for feature in counts_table.index}  # dict of dicts
     with gtf.open("r") as in_file:
-        for i, rec in enumerate(GFF.parse_simple(in_file)):
-            attributes = rec["quals"]
-            # for each value of the attribute signifying the feature/gene
-            gene_ids = (gene for gene in attributes.get(feature_attribute, [])
-                        if gene in counts_table.index)
-            for gene in gene_ids:
-                for attribute in additional_attributes:
-                    # and for each of their values
-                    for value in attributes.get(attribute, []):
-                        # make sure the appropriate column contains a list
-                        if counts_table[attribute][gene] is None:
-                            counts_table.at[gene, attribute] = [value]
-                        # and add the value if it isn't present already.
-                        elif value not in counts_table[attribute][gene]:
-                            counts_table.at[gene, attribute].append(value)
-    # Reformat the retrieved attributes into strings
-    for attribute in additional_attributes:
-        counts_table[attribute] = counts_table[attribute].apply(
-            lambda x: None if x is None else ";".join(x))
+        for rec in GFF.parse_simple(in_file):
+            record_attributes = rec['quals']
+            _ = [
+                features_list[feature][attr].update(set(
+                    set(record_attributes.get(attr, []))
+                )) for attr in additional_attributes
+                for feature in record_attributes.get(feature_attribute, [])
+                if feature in counts_table.index
+            ]
+
+    for attr in additional_attributes:
+        column = [";".join(v[attr]) if len(v[attr]) > 0 else None
+                  for v in features_list.values()]
+        counts_table.insert(0, attr, column)
     return counts_table
 
 

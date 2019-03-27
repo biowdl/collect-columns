@@ -42,9 +42,12 @@ setup(name="mergecounts",
       author_email="sasc@lumc.nl",
       license="MIT",
       packages=["mergecounts"],
+      package_dir={'': 'src'},
       install_requires=[
         "pandas>=0.23",
         "bcbio-gff",
         "biopython" #Required for bcbio-gff
       ],
-      scripts=["mergecounts/mergecounts.py"])
+      entry_points={
+          'console_scripts': ['mergecounts=mergecounts:main'],
+      })

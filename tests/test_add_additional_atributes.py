@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from mergecounts.mergecounts import add_additional_attributes
+from mergecounts import add_additional_attributes
 
 
 datadir = Path(__file__).parent / Path("data")

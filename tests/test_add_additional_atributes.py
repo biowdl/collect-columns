@@ -53,4 +53,6 @@ def test_add_additional_attributes():
                 "sample1.fragments_per_gene"]).set_index("feature")
     result = add_additional_attributes(count_table, gtf, "gene_id",
                                        ["ref_gene_id", "gene_name"])
+    print(result)
+    print(expected_result)
     assert result.equals(expected_result)

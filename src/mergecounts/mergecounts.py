@@ -80,22 +80,28 @@ def add_additional_attributes(counts_table: pd.DataFrame, gtf: Path,
     :param additional_attributes: A list containing the keys of the
     attributes which will be added to the table.
     """
-    features_list = {feature: {attr: set() for attr in additional_attributes}
+    # Create dictionary mapping attributes to features
+    features_list = {feature: {attr: [] for attr in additional_attributes}
                      for feature in counts_table.index}  # dict of dicts
     with gtf.open("r") as in_file:
         for rec in GFF.parse_simple(in_file):
             record_attributes = rec['quals']
-            _ = [
-                features_list[feature][attr].update(set(
-                    set(record_attributes.get(attr, []))
-                )) for attr in additional_attributes
-                for feature in record_attributes.get(feature_attribute, [])
-                if feature in counts_table.index
-            ]
+            for attr in additional_attributes:
+                for feature in record_attributes.get(feature_attribute, []):
+                    if feature in counts_table.index:
+                        # Use lists to ensure the order stays the same.
+                        # This way attributes which belong together
+                        # will likely have to same position in their
+                        # respective columns, assuming the available
+                        # attributes for each record is consistent.
+                        features_list[feature][attr].extend(
+                            [a for a in record_attributes.get(attr, [])
+                             if a not in features_list[feature][attr]])
 
-    for attr in additional_attributes:
-        column = [";".join(v[attr]) if len(v[attr]) > 0 else None
-                  for v in features_list.values()]
+    for attr in additional_attributes[::-1]:
+        column = [";".join(features_list[feature][attr])
+                  if len(features_list[feature][attr]) > 0 else None
+                  for feature in counts_table.index]
         counts_table.insert(0, attr, column)
     return counts_table
 

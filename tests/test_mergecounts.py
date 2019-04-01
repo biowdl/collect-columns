@@ -23,13 +23,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from mergecounts.mergecounts import mergecounts
+from collect_columns.collect_columns import collect_columns
 
 
 datadir = Path(__file__).parent / Path("data")
 
 
-def test_mergecounts_htseq():
+def test_collect_columns_htseq():
     tables = [datadir / Path("htseq") / Path("sample1.fragments_per_gene"),
               datadir / Path("htseq") / Path("sample2.fragments_per_gene")]
     expected_result = pd.DataFrame(data={
@@ -42,11 +42,11 @@ def test_mergecounts_htseq():
         "sample2.fragments_per_gene": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
     }, columns=["feature", "sample1.fragments_per_gene",
                 "sample2.fragments_per_gene"]).set_index("feature")
-    result = mergecounts(tables, 0, 1, "\t", None, False)
+    result = collect_columns(tables, 0, 1, "\t", None, False)
     assert result.equals(expected_result)
 
 
-def test_mergecounts_htseq_with_names():
+def test_collect_columns_htseq_with_names():
     tables = [datadir / Path("htseq") / Path("sample1.fragments_per_gene"),
               datadir / Path("htseq") / Path("sample2.fragments_per_gene")]
     expected_result = pd.DataFrame(data={
@@ -57,11 +57,11 @@ def test_mergecounts_htseq_with_names():
         "sample1": [2371, 381, 741, 2361, 382, 706, 0, 2995, 0, 5, 131],
         "sample2": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
     }, columns=["feature", "sample1", "sample2"]).set_index("feature")
-    result = mergecounts(tables, 0, 1, "\t", ["sample1", "sample2"], False)
+    result = collect_columns(tables, 0, 1, "\t", ["sample1", "sample2"], False)
     assert result.equals(expected_result)
 
 
-def test_mergecounts_stringtie():
+def test_collect_columns_stringtie():
     tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
               datadir / Path("stringtie") / Path("sample2.abundance")]
     expected_result = pd.DataFrame(data={
@@ -73,11 +73,11 @@ def test_mergecounts_stringtie():
                               84648.109375, 4290.078125, 9926.898438],
     }, columns=["feature", "sample1.abundance",
                 "sample2.abundance"]).set_index("feature")
-    result = mergecounts(tables, 0, 7, "\t", None, True)
+    result = collect_columns(tables, 0, 7, "\t", None, True)
     assert result.equals(expected_result)
 
 
-def test_mergecounts_stringtie_with_names():
+def test_collect_columns_stringtie_with_names():
     tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
               datadir / Path("stringtie") / Path("sample2.abundance")]
     expected_result = pd.DataFrame(data={
@@ -88,11 +88,11 @@ def test_mergecounts_stringtie_with_names():
         "sample2": [85151.953125, 160.070312, 1229.078125, 84648.109375,
                     4290.078125, 9926.898438],
     }, columns=["feature", "sample1", "sample2"]).set_index("feature")
-    result = mergecounts(tables, 0, 7, "\t", ["sample1", "sample2"], True)
+    result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"], True)
     assert result.equals(expected_result)
 
 
-def test_mergecounts_semicolon():
+def test_collect_columns_semicolon():
     tables = [datadir / Path("semicolon") / Path("sample1.csv"),
               datadir / Path("semicolon") / Path("sample2.csv")]
     expected_result = pd.DataFrame(data={
@@ -101,5 +101,5 @@ def test_mergecounts_semicolon():
         "sample1.csv": [1, 2, 3, 4, 5, np.nan],
         "sample2.csv": [10, 20, 30, 40, np.nan, 60],
     }, columns=["feature", "sample1.csv", "sample2.csv"]).set_index("feature")
-    result = mergecounts(tables, 1, 0, ";", None, True)
+    result = collect_columns(tables, 1, 0, ";", None, True)
     assert result.equals(expected_result)

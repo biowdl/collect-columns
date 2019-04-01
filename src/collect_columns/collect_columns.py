@@ -26,16 +26,16 @@ from BCBio import GFF
 import pandas as pd
 
 
-def mergecounts(count_tables: List[Path], feature_column: int,
-                counts_column: int, sep: str, names: Optional[List[str]],
-                tables_have_headers: bool) -> pd.DataFrame:
+def collect_columns(count_tables: List[Path], feature_column: int,
+                    value_column: int, sep: str, names: Optional[List[str]],
+                    tables_have_headers: bool) -> pd.DataFrame:
     """
-    Merge a set of count tables.
-    :param count_tables: A list of paths to the count tables to be
-    merged.
+    Retrieve a column from each in a set of tables and put them into a
+    single table, mapping the rows based on other column.
+    :param count_tables: A list of paths to the tables to be merged.
     :param feature_column: The position of the column with the (unique)
-    feature ids.
-    :param counts_column: The position of the column with the values of
+    feature/row ids.
+    :param value_column: The position of the column with the values of
     interest.
     :param sep: The separator used in the tables.
     :param names: The names of the samples corresponding to the tables
@@ -51,14 +51,14 @@ def mergecounts(count_tables: List[Path], feature_column: int,
     # Load in the first table.
     merged_table = pd.read_csv(count_tables.pop(0), sep=sep, header=header,
                                index_col=feature_column,
-                               usecols=[feature_column, counts_column])
+                               usecols=[feature_column, value_column])
     merged_table.columns = [names.pop(0)]
     merged_table.index.names = ["feature"]
     # Merge the other tables into the first.
     for i, table in enumerate(count_tables):
         sample_table = pd.read_csv(table, sep=sep, header=header,
                                    index_col=feature_column,
-                                   usecols=[feature_column, counts_column])
+                                   usecols=[feature_column, value_column])
         sample_table.columns = [names[i]]
         sample_table.index.names = ["feature"]
         merged_table = merged_table.merge(sample_table, left_index=True,
@@ -66,29 +66,29 @@ def mergecounts(count_tables: List[Path], feature_column: int,
     return merged_table
 
 
-def add_additional_attributes(counts_table: pd.DataFrame, gtf: Path,
+def add_additional_attributes(table: pd.DataFrame, gtf: Path,
                               feature_attribute: str,
                               additional_attributes: List[str]):
     """
     Retrieve additional attributes from the GTF/GFF and add them to the
-    counts table.
-    :param counts_table: The pandas DataFrame to which the additional
+    table.
+    :param table: The pandas DataFrame to which the additional
     attributes will be added.
     :param gtf: The path to the the GTF/GFF file.
     :param feature_attribute: The attribute from the GTF/GFF used for
-    matching the feature records with the rows in the count table.
+    matching the feature records with the rows in the table.
     :param additional_attributes: A list containing the keys of the
     attributes which will be added to the table.
     """
     # Create dictionary mapping attributes to features
     features_list = {feature: {attr: [] for attr in additional_attributes}
-                     for feature in counts_table.index}  # dict of dicts
+                     for feature in table.index}  # dict of dicts of list
     with gtf.open("r") as in_file:
         for rec in GFF.parse_simple(in_file):
             record_attributes = rec['quals']
             for attr in additional_attributes:
                 for feature in record_attributes.get(feature_attribute, []):
-                    if feature in counts_table.index:
+                    if feature in table.index:
                         # Use lists to ensure the order stays the same.
                         # This way attributes which belong together
                         # will likely have to same position in their
@@ -101,41 +101,41 @@ def add_additional_attributes(counts_table: pd.DataFrame, gtf: Path,
     for attr in additional_attributes[::-1]:
         column = [";".join(features_list[feature][attr])
                   if len(features_list[feature][attr]) > 0 else None
-                  for feature in counts_table.index]
-        counts_table.insert(0, attr, column)
-    return counts_table
+                  for feature in table.index]
+        table.insert(0, attr, column)
+    return table
 
 
 def main():
     args = parse_args()
-    merged_counts_table = mergecounts(args.table, args.feature_column,
-                                      args.counts_column, args.sep, args.names,
-                                      args.header)
+    merged_table = collect_columns(args.table, args.feature_column,
+                                   args.value_column, args.sep, args.names,
+                                   args.header)
     if args.additional_attributes is not None:
-        merged_counts_table = add_additional_attributes(
-            merged_counts_table, args.gtf, args.feature_attribute,
+        merged_table = add_additional_attributes(
+            merged_table, args.gtf, args.feature_attribute,
             args.additional_attributes)
-    merged_counts_table.to_csv(args.output, sep=args.sep)
+    merged_table.to_csv(args.output, sep=args.sep)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Merges counts tables from multiple samples into a "
-                    "single counts table. Optionally, additional "
-                    "attributes may be retrieved from a GTF or GFF "
-                    "file, which will be added as additional column in "
-                    "the merged count table as well.")
+        description="Retrieves a column from a set of tables and puts "
+                    "them into a single table.\n"
+                    "Optionally, additional attributes may be retrieved from "
+                    "a GTF or GFF file, which will be added as additional "
+                    "column in the merged table as well.")
     # positional
     parser.add_argument("output", type=Path,
                         help="The path the output will be written to.")
     parser.add_argument("table", type=Path, nargs="+",
-                        help="The count tables to be merged.")
+                        help="The tables to be merged.")
     # optional
     parser.add_argument("-f", "--feature-column", type=int, default=0,
                         metavar="I",
                         help="The position of the column with the "
                              "(unique) feature ids. Default to 0.")
-    parser.add_argument("-c", "--counts-column", type=int, default=1,
+    parser.add_argument("-c", "--value-column", type=int, default=1,
                         metavar="I",
                         help="The position of the column with the "
                              "values of interest. Defaults to 1.")
@@ -155,7 +155,7 @@ def parse_args():
     parser.add_argument("-a", "--additional-attributes", type=str, nargs="+",
                         metavar="ATTR",
                         help="A list of attributes which will be added "
-                             "to the merged count table. These attributes "
+                             "to the merged table. These attributes "
                              "will be retrieved from the GTF or GFF file "
                              "specified with the -g option. Multiple values "
                              "will be separator by a ';'. Requires -g to be "
@@ -169,7 +169,7 @@ def parse_args():
                         default="gene_id",
                         help="The attribute from the GTF/GFF used for "
                              "matching the feature records with the rows in "
-                             "the count table. Ignored if -a is not "
+                             "the table. Ignored if -a is not "
                              "specified. Defaults to 'gene_id'.")
     args = parser.parse_args()
     if args.additional_attributes is not None and args.gtf is None:

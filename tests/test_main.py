@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mergecounts.mergecounts import main, parse_args
+from collect_columns.collect_columns import main, parse_args
 
 
 datadir = Path(__file__).parent / Path("data")
@@ -114,7 +114,7 @@ def test_parse_args_defaults():
     assert args.table == [Path("input")]
     assert args.output == Path("output")
     assert args.feature_column == 0
-    assert args.counts_column == 1
+    assert args.value_column == 1
     assert args.sep == "\t"
     assert args.names is None
     assert args.header is False

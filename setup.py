@@ -23,9 +23,10 @@ from setuptools import setup
 with open("README.md", "r") as readme_file:
     LONG_DESCRIPTION = readme_file.read()
 
-setup(name="mergecounts",
+setup(name="collect-columns",
       version="0.1-dev",
-      description="Merges counts tables from muliple samples.",
+      description="Retrieve a columns for each each in a set of tables, "
+                  "placing them in a single output table.",
       long_description=LONG_DESCRIPTION,
       classifiers=[
         "Programming Language :: Python :: 3 :: Only",
@@ -41,7 +42,7 @@ setup(name="mergecounts",
       author="Leiden University Medical Center",
       author_email="sasc@lumc.nl",
       license="MIT",
-      packages=["mergecounts"],
+      packages=["collect_columns"],
       package_dir={'': 'src'},
       install_requires=[
         "pandas>=0.23",
@@ -49,5 +50,6 @@ setup(name="mergecounts",
         "biopython" #Required for bcbio-gff
       ],
       entry_points={
-          'console_scripts': ['mergecounts=mergecounts.mergecounts:main'],
+          "console_scripts":
+              ["collect-columns=collect_columns.collect_columns:main"]
       })

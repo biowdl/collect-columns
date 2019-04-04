@@ -1,20 +1,21 @@
-# mergecounts
+# collect-columns
 
-This tool merges counts tables from multiple samples into one count table.
-Optionally, additional attributes from the associated GTF/GFF file may be
-added to the output tables.
+This tool retrieves a column from each in a set of tables and compiles into a single table.
+Optionally, additional attributes from the associated GTF/GFF file may be added to the output
+tables.
 
 ## Installation
 TODO
+Clone the repo and run `pip install .`
 
 ## Usage
 ```
-mergecounts.py output_path input_files...
+collect-columns output_path input_files...
 ```
 
 It assumes that all input count tables are in the same format.
 By default the format is assumed to be headerless and tab separated, with the
-first column being the feature identifiers and the second the values/counts.
+first column being the feature identifiers and the second the values of interest.
 The output table will use the same separator as the input tables and contain
 a header. The `feature` column will contain the feature identifiers, the value
 columns will be named after the input files or according to the names given
@@ -41,7 +42,7 @@ To add additional attributes from a GTF/GFF, the following options can be given:
 #### HTSeq-count
 Using the output from HTSeq-count as input the following command:
 ```
-mergecounts.py all.tsv s1.tsv s2.tsv
+collect-columns all.tsv s1.tsv s2.tsv
 ```
 will result in a table like:
 
@@ -54,7 +55,7 @@ will result in a table like:
 #### Stringtie
 Using stringtie abundance output as input, the following command:
 ```
-mergecounts.py all.FPKM s1.abundance s2.abundance \
+collect-columns all.FPKM s1.abundance s2.abundance \
     -c 7 \
     -H \
     -a ref_gene_id gene_name \

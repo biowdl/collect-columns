@@ -24,10 +24,11 @@ with open("README.md", "r") as readme_file:
     LONG_DESCRIPTION = readme_file.read()
 
 setup(name="collect-columns",
-      version="0.1.0",
+      version="0.1.1",
       description="Retrieve a columns for each each in a set of tables, "
                   "placing them in a single output table.",
       long_description=LONG_DESCRIPTION,
+      long_description_content_type='text/markdown',
       classifiers=[
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",

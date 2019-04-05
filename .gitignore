@@ -7,3 +7,5 @@ docs/_build/
 venv/
 .idea/
 .tox
+dist/
+build/

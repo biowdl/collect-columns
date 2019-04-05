@@ -5,7 +5,7 @@ Optionally, additional attributes from the associated GTF/GFF file may be added 
 tables.
 
 ## Installation
-* Clone the repository: `git clone `https://github.com/biowdl/collect-columns.git`
+* Clone the repository: `git clone https://github.com/biowdl/collect-columns.git`
 * Enter the repository: `cd collect-columns`
 * Install using pip: `pip install .`
 

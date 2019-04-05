@@ -5,8 +5,9 @@ Optionally, additional attributes from the associated GTF/GFF file may be added 
 tables.
 
 ## Installation
-TODO
-Clone the repo and run `pip install .`
+* Clone the repository: `git clone `https://github.com/biowdl/collect-columns.git`
+* Enter the repository: `cd collect-columns`
+* Install using pip: `pip install .`
 
 ## Usage
 ```
@@ -38,7 +39,7 @@ To add additional attributes from a GTF/GFF, the following options can be given:
 | `-g` | a path | The gtf file from which the attributes will be retrieved. |
 | `-F` | a word | The attribute used to map rows in the input tables to gtf record. Defaults to `gene_id`. |
 
-### example
+### Examples
 #### HTSeq-count
 Using the output from HTSeq-count as input the following command:
 ```

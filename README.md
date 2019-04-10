@@ -5,6 +5,9 @@ Optionally, additional attributes from the associated GTF/GFF file may be added 
 tables.
 
 ## Installation
+Install from PyPI: `pip install collect-columns`
+
+Install from github:
 * Clone the repository: `git clone https://github.com/biowdl/collect-columns.git`
 * Enter the repository: `cd collect-columns`
 * Install using pip: `pip install .`

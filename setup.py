@@ -25,8 +25,8 @@ with open("README.md", "r") as readme_file:
 
 setup(name="collect-columns",
       version="0.2.0-dev",
-      description="Retrieve a column for each each in a set of tables, "
-                  "placing them in a single output table.",
+      description="Retrieve a column for each in a set of tables, placing "
+                  "them in a single output table.",
       long_description=LONG_DESCRIPTION,
       long_description_content_type='text/markdown',
       classifiers=[

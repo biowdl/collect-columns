@@ -37,17 +37,19 @@ def test_main_htseq(tmpdir):
     sample2 = str(datadir / Path("htseq") / Path("sample2.fragments_per_gene"))
     expected_result = pd.DataFrame(data={
         "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
-                    "MSTRG.6", "__no_feature", "__ambiguous",
-                    "__too_low_aQual", "__not_aligned",
-                    "__alignment_not_unique"],
-        "s1": [2371, 381, 741, 2361, 382, 706, 0, 2995, 0, 5, 131],
-        "s2": [0, 1, 7, 2, 3, 7, 0, 295, 0, 51, 13]
+                    "MSTRG.6", "__alignment_not_unique", "__ambiguous",
+                    "__no_feature", "__not_aligned", "__too_low_aQual"],
+        "s1": [2371, 381, 741, 2361, 382, 706, 131, 2995, 0, 5, 0],
+        "s2": [0, 1, 7, 2, 3, 7, 13, 295, 0, 51, 0]
     }, columns=["feature", "s1", "s2"])
     output_file = tmpdir.join("output.tsv")
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-n", "s1",
                 "s2"]
     main()
+    print(open(output_file.strpath).read())
     result = pd.read_csv(output_file, sep="\t")
+    print(result)
+    print(expected_result)
     assert result.equals(expected_result)
 
 

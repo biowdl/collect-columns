@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 import argparse
+import csv
 from pathlib import Path
 from typing import List, Optional
 
@@ -46,24 +47,20 @@ def collect_columns(count_tables: List[Path], feature_column: int,
     # If no sample names are given use table basenames instead.
     if names is None:
         names = [path.name for path in count_tables]
-    # Convert tables_have_headers to conform with the pandas parameter.
-    header = 0 if tables_have_headers else None
-    # Load in the first table.
-    merged_table = pd.read_csv(count_tables.pop(0), sep=sep, header=header,
-                               index_col=feature_column,
-                               usecols=[feature_column, value_column])
-    merged_table.columns = [names.pop(0)]
-    merged_table.index.names = ["feature"]
-    # Merge the other tables into the first.
+    counts = {}
     for i, table in enumerate(count_tables):
-        sample_table = pd.read_csv(table, sep=sep, header=header,
-                                   index_col=feature_column,
-                                   usecols=[feature_column, value_column])
-        sample_table.columns = [names[i]]
-        sample_table.index.names = ["feature"]
-        merged_table = merged_table.merge(sample_table, left_index=True,
-                                          right_index=True, how="outer")
-    return merged_table
+        reader = csv.reader(table.open(), delimiter=sep)
+        if tables_have_headers is True:
+            next(reader)
+        counts[names[i]] = {}
+        for record in reader:
+            feature = record[feature_column]
+            value = record[value_column]
+            counts[names[i]][feature] = value
+    out = pd.DataFrame(data=counts)
+    out.index.name = "feature"
+    return out
+
 
 
 def add_additional_attributes(table: pd.DataFrame, gtf: Path,
@@ -111,10 +108,12 @@ def main():
     merged_table = collect_columns(args.table, args.feature_column,
                                    args.value_column, args.sep, args.names,
                                    args.header)
+    print(merged_table)
     if args.additional_attributes is not None:
         merged_table = add_additional_attributes(
             merged_table, args.gtf, args.feature_attribute,
             args.additional_attributes)
+    print(merged_table)
     merged_table.to_csv(args.output, sep=args.sep)
 
 

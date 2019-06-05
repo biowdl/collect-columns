@@ -22,6 +22,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from collect_columns.collect_columns import collect_columns
 
@@ -104,3 +105,11 @@ def test_collect_columns_semicolon():
     }, columns=["feature", "sample1.csv", "sample2.csv"]).set_index("feature")
     result = collect_columns(tables, 1, 0, ";", None, True)
     assert result.equals(expected_result)
+
+
+def test_collect_columns_incorrect_number_of_names():
+    tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
+              datadir / Path("stringtie") / Path("sample2.abundance")]
+    with pytest.raises(ValueError,
+        match="The number of names did not match the number of inputs."):
+        collect_columns(tables, 0, 7, "\t", ["sample1"], True)

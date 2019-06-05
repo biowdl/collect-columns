@@ -47,20 +47,23 @@ def collect_columns(count_tables: List[Path], feature_column: int,
     # If no sample names are given use table basenames instead.
     if names is None:
         names = [path.name for path in count_tables]
-    counts = {}
+    if len(names) != len(count_tables):
+        raise ValueError(
+            "The number of names did not match the number of inputs.")
+    counts = dict()
     for i, table in enumerate(count_tables):
         reader = csv.reader(table.open(), delimiter=sep)
+        name = names[i]
         if tables_have_headers is True:
             next(reader)
-        counts[names[i]] = {}
+        counts[name] = dict()
         for record in reader:
             feature = record[feature_column]
             value = record[value_column]
-            counts[names[i]][feature] = value
+            counts[name][feature] = value
     out = pd.DataFrame(data=counts)
     out.index.name = "feature"
     return out
-
 
 
 def add_additional_attributes(table: pd.DataFrame, gtf: Path,

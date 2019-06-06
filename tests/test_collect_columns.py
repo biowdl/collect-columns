@@ -20,10 +20,6 @@
 
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
-import pytest
-
 from collect_columns.collect_columns import collect_columns
 
 
@@ -33,83 +29,45 @@ datadir = Path(__file__).parent / Path("data")
 def test_collect_columns_htseq():
     tables = [datadir / Path("htseq") / Path("sample1.fragments_per_gene"),
               datadir / Path("htseq") / Path("sample2.fragments_per_gene")]
-    expected_result = pd.DataFrame(data={
-        "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
-                    "MSTRG.6", "__alignment_not_unique", "__ambiguous",
-                    "__no_feature", "__not_aligned", "__too_low_aQual"],
-        "sample1.fragments_per_gene": ["2371", "381", "741", "2361", "382",
-                                       "706", "131", "2995", "0", "5", "0"],
-        "sample2.fragments_per_gene": ["0", "1", "7", "2", "3", "7", "13",
-                                       "295", "0", "51", "0"]
-    }, columns=["feature", "sample1.fragments_per_gene",
-                "sample2.fragments_per_gene"]).set_index("feature")
-    result = collect_columns(tables, 0, 1, "\t", None, False)
-    assert result.equals(expected_result)
-
-
-def test_collect_columns_htseq_with_names():
-    tables = [datadir / Path("htseq") / Path("sample1.fragments_per_gene"),
-              datadir / Path("htseq") / Path("sample2.fragments_per_gene")]
-    expected_result = pd.DataFrame(data={
-        "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
-                    "MSTRG.6", "__alignment_not_unique", "__ambiguous",
-                    "__no_feature", "__not_aligned", "__too_low_aQual"],
-        "sample1": ["2371", "381", "741", "2361", "382", "706", "131", "2995",
-                    "0", "5", "0"],
-        "sample2": ["0", "1", "7", "2", "3", "7", "13", "295", "0", "51", "0"]
-    }, columns=["feature", "sample1", "sample2"]).set_index("feature")
+    expected_result = {
+        "MSTRG.1": {"sample1": "2371", "sample2": "0"},
+        "MSTRG.2": {"sample1": "381", "sample2": "1"},
+        "MSTRG.3": {"sample1": "741", "sample2": "7"},
+        "MSTRG.4": {"sample1": "2361", "sample2": "2"},
+        "MSTRG.5": {"sample1": "382", "sample2": "3"},
+        "MSTRG.6": {"sample1": "706", "sample2": "7"},
+        "__alignment_not_unique": {"sample1": "131", "sample2": "13"},
+        "__ambiguous": {"sample1": "2995", "sample2": "295"},
+        "__no_feature": {"sample1": "0", "sample2": "0"},
+        "__not_aligned": {"sample1": "5", "sample2": "51"},
+        "__too_low_aQual": {"sample1": "0", "sample2": "0"}}
     result = collect_columns(tables, 0, 1, "\t", ["sample1", "sample2"], False)
-    assert result.equals(expected_result)
+    assert result == expected_result
 
 
 def test_collect_columns_stringtie():
     tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
               datadir / Path("stringtie") / Path("sample2.abundance")]
-    expected_result = pd.DataFrame(data={
-        "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
-                    "MSTRG.6"],
-        "sample1.abundance": ["185151.953125", "100160.070312", "91229.078125",
-                              "184648.109375", "104290.078125",
-                              "89926.898438"],
-        "sample2.abundance": ["85151.953125", "160.070312", "1229.078125",
-                              "84648.109375", "4290.078125", "9926.898438"],
-    }, columns=["feature", "sample1.abundance",
-                "sample2.abundance"]).set_index("feature")
-    result = collect_columns(tables, 0, 7, "\t", None, True)
-    assert result.equals(expected_result)
-
-
-def test_collect_columns_stringtie_with_names():
-    tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
-              datadir / Path("stringtie") / Path("sample2.abundance")]
-    expected_result = pd.DataFrame(data={
-        "feature": ["MSTRG.1", "MSTRG.2", "MSTRG.3", "MSTRG.4", "MSTRG.5",
-                    "MSTRG.6"],
-        "sample1": ["185151.953125", "100160.070312", "91229.078125",
-                    "184648.109375", "104290.078125", "89926.898438"],
-        "sample2": ["85151.953125", "160.070312", "1229.078125",
-                    "84648.109375", "4290.078125", "9926.898438"],
-    }, columns=["feature", "sample1", "sample2"]).set_index("feature")
+    expected_result = {
+        "MSTRG.1": {"sample1": "185151.953125", "sample2": "85151.953125"},
+        "MSTRG.2": {"sample1": "100160.070312", "sample2": "160.070312"},
+        "MSTRG.3": {"sample1": "91229.078125", "sample2": "1229.078125"},
+        "MSTRG.4": {"sample1": "184648.109375", "sample2": "84648.109375"},
+        "MSTRG.5": {"sample1": "104290.078125", "sample2": "4290.078125"},
+        "MSTRG.6": {"sample1": "89926.898438", "sample2": "9926.898438"}}
     result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"], True)
-    assert result.equals(expected_result)
+    assert result == expected_result
 
 
 def test_collect_columns_semicolon():
     tables = [datadir / Path("semicolon") / Path("sample1.csv"),
               datadir / Path("semicolon") / Path("sample2.csv")]
-    expected_result = pd.DataFrame(data={
-        "feature": ["gene_1", "gene_2", "gene_3", "gene_4", "gene_5",
-                    "gene_6"],
-        "sample1.csv": ["1", "2", "3", "4", "5", np.nan],
-        "sample2.csv": ["10", "20", "30", "40", np.nan, "60"],
-    }, columns=["feature", "sample1.csv", "sample2.csv"]).set_index("feature")
-    result = collect_columns(tables, 1, 0, ";", None, True)
-    assert result.equals(expected_result)
-
-
-def test_collect_columns_incorrect_number_of_names():
-    tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
-              datadir / Path("stringtie") / Path("sample2.abundance")]
-    with pytest.raises(ValueError,
-        match="The number of names did not match the number of inputs."):
-        collect_columns(tables, 0, 7, "\t", ["sample1"], True)
+    expected_result = {
+        "gene_1": {"sample1": "1", "sample2": "10"},
+        "gene_2": {"sample1": "2", "sample2": "20"},
+        "gene_3": {"sample1": "3", "sample2": "30"},
+        "gene_4": {"sample1": "4", "sample2": "40"},
+        "gene_5": {"sample1": "5"},
+        "gene_6": {"sample2": "60"}}
+    result = collect_columns(tables, 1, 0, ";", ["sample1", "sample2"], True)
+    assert result == expected_result

@@ -1,6 +1,7 @@
 v0.2.0
 -----
 - Major performance (memory usage and speed) improvements
+- Removed pandas dependency
 
 v0.1.1
 -----

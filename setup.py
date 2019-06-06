@@ -46,7 +46,6 @@ setup(name="collect-columns",
       packages=["collect_columns"],
       package_dir={'': 'src'},
       install_requires=[
-        "pandas>=0.23",
         "bcbio-gff",
         "biopython" #Required for bcbio-gff
       ],

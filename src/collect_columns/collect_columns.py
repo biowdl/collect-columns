@@ -21,15 +21,14 @@
 import argparse
 import csv
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from BCBio import GFF
-import pandas as pd
 
 
 def collect_columns(count_tables: List[Path], feature_column: int,
-                    value_column: int, sep: str, names: Optional[List[str]],
-                    tables_have_headers: bool) -> pd.DataFrame:
+                    value_column: int, sep: str, names: List[str],
+                    tables_have_headers: bool) -> dict:
     """
     Retrieve a column from each in a set of tables and put them into a
     single table, mapping the rows based on other column.
@@ -45,28 +44,24 @@ def collect_columns(count_tables: List[Path], feature_column: int,
     :param tables_have_headers: Whether or not the tables have a header.
     """
     # If no sample names are given use table basenames instead.
-    if names is None:
-        names = [path.name for path in count_tables]
-    if len(names) != len(count_tables):
-        raise ValueError(
-            "The number of names did not match the number of inputs.")
-    counts = dict()
+    merged_table = {}
     for i, table in enumerate(count_tables):
         reader = csv.reader(table.open(), delimiter=sep)
-        name = names[i]
+        column_name = names[i]
         if tables_have_headers is True:
             next(reader)
-        counts[name] = dict()
         for record in reader:
             feature = record[feature_column]
             value = record[value_column]
-            counts[name][feature] = value
-    out = pd.DataFrame(data=counts)
-    out.index.name = "feature"
-    return out
+            try:
+                merged_table[feature][column_name] = value
+            # If feature key does not have a dict yet, create the dict.
+            except KeyError:
+                merged_table[feature] = {column_name: value}
+    return merged_table
 
 
-def add_additional_attributes(table: pd.DataFrame, gtf: Path,
+def add_additional_attributes(table: dict, gtf: Path,
                               feature_attribute: str,
                               additional_attributes: List[str]):
     """
@@ -81,43 +76,61 @@ def add_additional_attributes(table: pd.DataFrame, gtf: Path,
     attributes which will be added to the table.
     """
     # Create dictionary mapping attributes to features
-    features_list = {feature: {attr: [] for attr in additional_attributes}
-                     for feature in table.index}  # dict of dicts of list
     with gtf.open("r") as in_file:
         for rec in GFF.parse_simple(in_file):
             record_attributes = rec['quals']
             for attr in additional_attributes:
                 for feature in record_attributes.get(feature_attribute, []):
-                    if feature in table.index:
+                    if feature in table.keys():
                         # Use lists to ensure the order stays the same.
                         # This way attributes which belong together
                         # will likely have to same position in their
                         # respective columns, assuming the available
                         # attributes for each record is consistent.
-                        features_list[feature][attr].extend(
-                            [a for a in record_attributes.get(attr, [])
-                             if a not in features_list[feature][attr]])
-
-    for attr in additional_attributes[::-1]:
-        column = [";".join(features_list[feature][attr])
-                  if len(features_list[feature][attr]) > 0 else None
-                  for feature in table.index]
-        table.insert(0, attr, column)
+                        try:
+                            table[feature][attr] += (
+                                [a for a in record_attributes.get(attr, [])
+                                 if a not in table[feature][attr]])
+                        except KeyError:
+                            table[feature][attr] = (
+                                [a for a in record_attributes.get(attr, [])])
+    # Turn lists into strings
+    for feature in table.keys():
+        for attribute in additional_attributes:
+            try:
+                table[feature][attribute] = ";".join(table[feature][attribute])
+            except KeyError:
+                pass
     return table
 
 
 def main():
     args = parse_args()
+    if args.names is None:
+        names = [path.name for path in args.table]
+    elif len(args.names) == len(args.table):
+        names = args.names
+    else:
+        raise ValueError(
+            "The number of names did not match the number of inputs.")
+
     merged_table = collect_columns(args.table, args.feature_column,
-                                   args.value_column, args.sep, args.names,
+                                   args.value_column, args.sep, names,
                                    args.header)
-    print(merged_table)
+
     if args.additional_attributes is not None:
         merged_table = add_additional_attributes(
             merged_table, args.gtf, args.feature_attribute,
             args.additional_attributes)
-    print(merged_table)
-    merged_table.to_csv(args.output, sep=args.sep)
+        names = args.additional_attributes + names
+
+    with args.output.open("w", newline="") as output_file:
+        writer = csv.writer(output_file, delimiter=args.sep)
+        writer.writerow(["feature"] + names)
+        for feature, values in merged_table.items():
+            row = [feature] + [values.get(column_name)
+                               for column_name in names]
+            writer.writerow(row)
 
 
 def parse_args():

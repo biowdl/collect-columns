@@ -50,7 +50,8 @@ def test_main_htseq(tmpdir):
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-n", "s1",
                 "s2"]
     main()
-    result = set(output_file.open().readlines())
+    with output_file.open() as out_file:
+        result = set(out_file.readlines())
     assert result == expected_result
 
 
@@ -72,7 +73,8 @@ def test_main_stringtie(tmpdir):
     sys.argv = ["script", output_file.strpath, sample1, sample2, "-c", "7",
                 "-H", "-g", gtf, "-a", "ref_gene_id", "gene_name"]
     main()
-    result = set(output_file.open().readlines())
+    with output_file.open() as out_file:
+        result = set(out_file.readlines())
     assert result == expected_result
 
 
@@ -94,7 +96,8 @@ def test_main_semicolon(tmpdir):
                 "-c", "0", "-s", ";", "-H", "-g", gtf, "-a", "ref_gene_id",
                 "transcript_id", "-F", "gene_name"]
     main()
-    result = set(output_file.open().readlines())
+    with output_file.open() as out_file:
+        result = set(out_file.readlines())
     assert result == expected_result
 
 

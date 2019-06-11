@@ -9,3 +9,5 @@ venv/
 .tox
 dist/
 build/
+large_test_data/
+htmlcov/

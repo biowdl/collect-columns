@@ -1,3 +1,8 @@
+v1.0.0-dev
+-----
+- Added a warning message when a feature is encountered multiple times in a
+  table
+
 v0.2.0
 -----
 - Major performance (memory usage and speed) improvements

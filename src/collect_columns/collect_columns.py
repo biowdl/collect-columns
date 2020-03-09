@@ -22,6 +22,7 @@ import argparse
 import csv
 from pathlib import Path
 from typing import List
+from warnings import warn
 
 from BCBio import GFF
 
@@ -54,6 +55,9 @@ def collect_columns(count_tables: List[Path], feature_column: int,
             feature = record[feature_column]
             value = record[value_column]
             try:
+                if column_name in merged_table[feature].keys():
+                    warn("duplicate value for row {} in {}, will overwrite "
+                         "previous value".format(feature, column_name))
                 merged_table[feature][column_name] = value
             # If feature key does not have a dict yet, create the dict.
             except KeyError:

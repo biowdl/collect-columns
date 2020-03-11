@@ -25,6 +25,9 @@ a header. The `feature` column will contain the feature identifiers, the value
 columns will be named after the input files or according to the names given
 through the `-n` option, which takes a list of names as argument.
 
+> Please note that if multiple rows with the same feature identifier exist in
+an input table, then these values will overwrite each other in the output table.
+
 In order to use a different input format the following options can be given:
 
 | option | arguments | definition |

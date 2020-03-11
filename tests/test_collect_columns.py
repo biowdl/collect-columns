@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 from pathlib import Path
+from warnings import catch_warnings
 
 from collect_columns.collect_columns import collect_columns
 
@@ -55,7 +56,11 @@ def test_collect_columns_stringtie():
         "MSTRG.4": {"sample1": "184648.109375", "sample2": "84648.109375"},
         "MSTRG.5": {"sample1": "104290.078125", "sample2": "4290.078125"},
         "MSTRG.6": {"sample1": "89926.898438", "sample2": "9926.898438"}}
-    result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"], True)
+    with catch_warnings(record=True) as warnings:
+        result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"],
+                                 True)
+        assert "duplicate value for row MSTRG.6 in sample2, will overwrite " \
+               "previous value" == str(warnings[0].message)
     assert result == expected_result
 
 

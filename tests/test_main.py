@@ -78,6 +78,29 @@ def test_main_stringtie(tmpdir):
     assert result == expected_result
 
 
+def test_main_stringtie_sum(tmpdir):
+    sample1 = str(datadir / Path("stringtie") / Path("sample1.abundance"))
+    sample2 = str(datadir / Path("stringtie") / Path("sample2.abundance"))
+    gtf = str(datadir / Path("merged.gtf"))
+    expected_result = set([
+        "feature\tref_gene_id\tgene_name\tsample1.abundance\t"
+        "sample2.abundance\n",
+        "MSTRG.1\tg_1;g_7\tgene_1;gene_7\t185151.953125\t85151.953125\n",
+        "MSTRG.2\tg_2\tgene_2\t100160.070312\t160.070312\n",
+        "MSTRG.3\tg_3\tgene_3\t91229.078125\t1229.078125\n",
+        "MSTRG.4\tg_4\tgene_4\t184648.109375\t84648.109375\n",
+        "MSTRG.5\tg_5\tgene_5\t104290.078125\t4290.078125\n",
+        "MSTRG.6\tg_6\tgene_6\t89926.898438\t9927.898438\n"])
+
+    output_file = tmpdir.join("output.tsv")
+    sys.argv = ["script", output_file.strpath, sample1, sample2, "-c", "7",
+                "-H", "-g", gtf, "-a", "ref_gene_id", "gene_name", "-S"]
+    main()
+    with output_file.open() as out_file:
+        result = set(out_file.readlines())
+    assert result == expected_result
+
+
 def test_main_semicolon(tmpdir):
     sample1 = str(datadir / Path("semicolon") / Path("sample1.csv"))
     sample2 = str(datadir / Path("semicolon") / Path("sample2.csv"))

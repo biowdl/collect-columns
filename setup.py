@@ -45,10 +45,7 @@ setup(name="collect-columns",
       license="MIT",
       packages=["collect_columns"],
       package_dir={'': 'src'},
-      install_requires=[
-        "bcbio-gff",
-        "biopython" #Required for bcbio-gff
-      ],
+      install_requires=["gffutils"],
       entry_points={
           "console_scripts":
               ["collect-columns=collect_columns.collect_columns:main"]

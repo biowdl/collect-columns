@@ -23,3 +23,10 @@ test3.7:
     - tox -e py37
   tags:
     - docker
+
+test3.7:
+  image: python:3.8-stretch
+  script:
+    - tox -e py38
+  tags:
+    - docker

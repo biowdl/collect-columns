@@ -1,3 +1,14 @@
+v1.0.0
+-----
+- Replaced the python package used for parsing GFF/GTF files. It used to be
+  bcbio-gff and is now gffutils.
+- Added the "-S"/"--sum-on-duplicate-id" flag. When this flag is set and a
+  given table contains multiple rows with the same feature id, then the
+  value in the output table will be the sum of the values from each of
+  those rows.
+- Added a warning message when a feature is encountered multiple times in a
+  table
+
 v0.2.0
 -----
 - Major performance (memory usage and speed) improvements

@@ -22,13 +22,15 @@ import argparse
 import csv
 from pathlib import Path
 from typing import List
+from warnings import warn
 
-from BCBio import GFF
+import gffutils
 
 
 def collect_columns(count_tables: List[Path], feature_column: int,
                     value_column: int, sep: str, names: List[str],
-                    tables_have_headers: bool) -> dict:
+                    tables_have_headers: bool,
+                    sum_on_duplicate_id: bool) -> dict:
     """
     Retrieve a column from each in a set of tables and put them into a
     single table, mapping the rows based on other column.
@@ -42,6 +44,8 @@ def collect_columns(count_tables: List[Path], feature_column: int,
     (in the same order as the tables). If None the basenames of tables
     will be used.
     :param tables_have_headers: Whether or not the tables have a header.
+    :param sum_on_duplicate_id: Whether or not values should be added up
+    if multiple rows exist with the same feature id.
     """
     # If no sample names are given use table basenames instead.
     merged_table = {}
@@ -52,12 +56,30 @@ def collect_columns(count_tables: List[Path], feature_column: int,
             next(reader)
         for record in reader:
             feature = record[feature_column]
-            value = record[value_column]
+            value = (float(record[value_column]) if sum_on_duplicate_id
+                     else record[value_column])
             try:
-                merged_table[feature][column_name] = value
+                if column_name in merged_table[feature].keys():
+                    if sum_on_duplicate_id:
+                        merged_table[feature][column_name] += value
+                    else:
+                        warn("duplicate value for row {} in {}, will "
+                             "overwrite previous value".format(feature,
+                                                               column_name))
+                        merged_table[feature][column_name] = value
+                else:
+                    merged_table[feature][column_name] = value
             # If feature key does not have a dict yet, create the dict.
             except KeyError:
                 merged_table[feature] = {column_name: value}
+
+        if sum_on_duplicate_id:
+            for feature_id in merged_table.keys():
+                try:
+                    merged_table[feature_id][column_name] = str(
+                        merged_table[feature_id][column_name])
+                except KeyError:
+                    pass
     return merged_table
 
 
@@ -77,10 +99,10 @@ def add_additional_attributes(table: dict, gtf: Path,
     """
     # Create dictionary mapping attributes to features
     with gtf.open("r") as in_file:
-        for rec in GFF.parse_simple(in_file):
-            record_attributes = rec['quals']
+        for line in in_file:
+            record = gffutils.feature.feature_from_line(line)
             for attr in additional_attributes:
-                for feature in record_attributes.get(feature_attribute, []):
+                for feature in record.attributes.get(feature_attribute, []):
                     if feature in table.keys():
                         # Use lists to ensure the order stays the same.
                         # This way attributes which belong together
@@ -89,11 +111,11 @@ def add_additional_attributes(table: dict, gtf: Path,
                         # attributes for each record is consistent.
                         try:
                             table[feature][attr] += (
-                                [a for a in record_attributes.get(attr, [])
+                                [a for a in record.attributes.get(attr, [])
                                  if a not in table[feature][attr]])
                         except KeyError:
                             table[feature][attr] = (
-                                [a for a in record_attributes.get(attr, [])])
+                                [a for a in record.attributes.get(attr, [])])
     # Turn lists into strings
     for feature in table.keys():
         for attribute in additional_attributes:
@@ -116,7 +138,7 @@ def main():
 
     merged_table = collect_columns(args.table, args.feature_column,
                                    args.value_column, args.sep, names,
-                                   args.header)
+                                   args.header, args.sum_on_duplicate_id)
 
     if args.additional_attributes is not None:
         merged_table = add_additional_attributes(
@@ -167,6 +189,12 @@ def parse_args():
     parser.add_argument("-H", "--header", action='store_true',
                         help="Whether or not the tables have a header. "
                              "Defaults to false.")
+    parser.add_argument("-S", "--sum-on-duplicate-id", action="store_true",
+                        help="Whether or not values should be added up if "
+                             "multiple rows exist with the same feature id. "
+                             "The values will become floats if this flag is "
+                             "set. By default only the last value will be "
+                             "taken and a warning will be give.")
     parser.add_argument("-a", "--additional-attributes", type=str, nargs="+",
                         metavar="ATTR",
                         help="A list of attributes which will be added "

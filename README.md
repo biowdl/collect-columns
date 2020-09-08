@@ -25,6 +25,10 @@ a header. The `feature` column will contain the feature identifiers, the value
 columns will be named after the input files or according to the names given
 through the `-n` option, which takes a list of names as argument.
 
+> Please note that if multiple rows with the same feature identifier exist in
+an input table, then these values will overwrite each other in the output table
+by default. See also the `-S` flag.
+
 In order to use a different input format the following options can be given:
 
 | option | arguments | definition |
@@ -33,6 +37,7 @@ In order to use a different input format the following options can be given:
 | `-c` | a number | The index of the column containing the values/counts. |
 | `-s` | a character | The separator.|
 | `-H` | | Indicates that the table has a header. |
+| `-S` | | Indicates that values should be added up if multiple rows exist with the same feature id. The values will become floats if this flag is set. By default only the last value will be taken and a warning will be give. |
 
 To add additional attributes from a GTF/GFF, the following options can be given:
 
@@ -64,7 +69,8 @@ collect-columns all.FPKM s1.abundance s2.abundance \
     -H \
     -a ref_gene_id gene_name \
     -g merged.gtf \
-    -n sample1 sample2
+    -n sample1 sample2 \
+    -S # Stringtie may at times return multiple rows for one gene, these values can simply be summed up.
 ```
 will result in a table like:
 

@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 from pathlib import Path
+from warnings import catch_warnings
 
 from collect_columns.collect_columns import collect_columns
 
@@ -41,7 +42,7 @@ def test_collect_columns_htseq():
         "__no_feature": {"sample1": "0", "sample2": "0"},
         "__not_aligned": {"sample1": "5", "sample2": "51"},
         "__too_low_aQual": {"sample1": "0", "sample2": "0"}}
-    result = collect_columns(tables, 0, 1, "\t", ["sample1", "sample2"], False)
+    result = collect_columns(tables, 0, 1, "\t", ["sample1", "sample2"], False, False)
     assert result == expected_result
 
 
@@ -55,7 +56,26 @@ def test_collect_columns_stringtie():
         "MSTRG.4": {"sample1": "184648.109375", "sample2": "84648.109375"},
         "MSTRG.5": {"sample1": "104290.078125", "sample2": "4290.078125"},
         "MSTRG.6": {"sample1": "89926.898438", "sample2": "9926.898438"}}
-    result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"], True)
+    with catch_warnings(record=True) as warnings:
+        result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"],
+                                 True, False)
+        assert "duplicate value for row MSTRG.6 in sample2, will overwrite " \
+               "previous value" == str(warnings[0].message)
+    assert result == expected_result
+
+
+def test_collect_columns_stringtie_sum_on_duplicate_id():
+    tables = [datadir / Path("stringtie") / Path("sample1.abundance"),
+              datadir / Path("stringtie") / Path("sample2.abundance")]
+    expected_result = {
+        "MSTRG.1": {"sample1": "185151.953125", "sample2": "85151.953125"},
+        "MSTRG.2": {"sample1": "100160.070312", "sample2": "160.070312"},
+        "MSTRG.3": {"sample1": "91229.078125", "sample2": "1229.078125"},
+        "MSTRG.4": {"sample1": "184648.109375", "sample2": "84648.109375"},
+        "MSTRG.5": {"sample1": "104290.078125", "sample2": "4290.078125"},
+        "MSTRG.6": {"sample1": "89926.898438", "sample2": "9927.898438"}}
+    result = collect_columns(tables, 0, 7, "\t", ["sample1", "sample2"],
+                             True, True)
     assert result == expected_result
 
 
@@ -69,5 +89,19 @@ def test_collect_columns_semicolon():
         "gene_4": {"sample1": "4", "sample2": "40"},
         "gene_5": {"sample1": "5"},
         "gene_6": {"sample2": "60"}}
-    result = collect_columns(tables, 1, 0, ";", ["sample1", "sample2"], True)
+    result = collect_columns(tables, 1, 0, ";", ["sample1", "sample2"], True, False)
+    assert result == expected_result
+
+
+def test_collect_columns_sum_on_duplicate_id_missing_values():
+    tables = [datadir / Path("semicolon") / Path("sample1.csv"),
+              datadir / Path("semicolon") / Path("sample2.csv")]
+    expected_result = {
+        "gene_1": {"sample1": "1.0", "sample2": "10.0"},
+        "gene_2": {"sample1": "2.0", "sample2": "20.0"},
+        "gene_3": {"sample1": "3.0", "sample2": "30.0"},
+        "gene_4": {"sample1": "4.0", "sample2": "40.0"},
+        "gene_5": {"sample1": "5.0"},
+        "gene_6": {"sample2": "60.0"}}
+    result = collect_columns(tables, 1, 0, ";", ["sample1", "sample2"], True, True)
     assert result == expected_result

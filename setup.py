@@ -24,7 +24,7 @@ with open("README.md", "r") as readme_file:
     LONG_DESCRIPTION = readme_file.read()
 
 setup(name="collect-columns",
-      version="0.2.0",
+      version="1.0.0",
       description="Retrieve a column for each in a set of tables, placing "
                   "them in a single output table.",
       long_description=LONG_DESCRIPTION,
@@ -35,7 +35,8 @@ setup(name="collect-columns",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Development Status :: 3 - Alpha",
+        "Programming Language :: Python :: 3.8",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
       ],
       keywords="bioinformatics",
@@ -45,10 +46,7 @@ setup(name="collect-columns",
       license="MIT",
       packages=["collect_columns"],
       package_dir={'': 'src'},
-      install_requires=[
-        "bcbio-gff",
-        "biopython" #Required for bcbio-gff
-      ],
+      install_requires=["gffutils"],
       entry_points={
           "console_scripts":
               ["collect-columns=collect_columns.collect_columns:main"]

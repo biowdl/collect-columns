@@ -1,4 +1,4 @@
-v1.0.0-dev
+v1.0.0
 -----
 - Replaced the python package used for parsing GFF/GTF files. It used to be
   bcbio-gff and is now gffutils.

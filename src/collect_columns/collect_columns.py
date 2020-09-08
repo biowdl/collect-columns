@@ -24,7 +24,6 @@ from pathlib import Path
 from typing import List
 from warnings import warn
 
-from BCBio import GFF
 import gffutils
 
 
@@ -100,38 +99,6 @@ def add_additional_attributes(table: dict, gtf: Path,
     """
     # Create dictionary mapping attributes to features
     with gtf.open("r") as in_file:
-        for rec in GFF.parse_simple(in_file):
-            record_attributes = rec['quals']
-            for attr in additional_attributes:
-                for feature in record_attributes.get(feature_attribute, []):
-                    if feature in table.keys():
-                        # Use lists to ensure the order stays the same.
-                        # This way attributes which belong together
-                        # will likely have to same position in their
-                        # respective columns, assuming the available
-                        # attributes for each record is consistent.
-                        try:
-                            table[feature][attr] += (
-                                [a for a in record_attributes.get(attr, [])
-                                 if a not in table[feature][attr]])
-                        except KeyError:
-                            table[feature][attr] = (
-                                [a for a in record_attributes.get(attr, [])])
-    # Turn lists into strings
-    for feature in table.keys():
-        for attribute in additional_attributes:
-            try:
-                table[feature][attribute] = ";".join(table[feature][attribute])
-            except KeyError:
-                pass
-    return table
-
-
-def alternative_add_additional_attributes(table: dict, gtf: Path,
-                              feature_attribute: str,
-                              additional_attributes: List[str]):
-    # Create dictionary mapping attributes to features
-    with gtf.open("r") as in_file:
         for line in in_file:
             record = gffutils.feature.feature_from_line(line)
             for attr in additional_attributes:
@@ -174,7 +141,7 @@ def main():
                                    args.header, args.sum_on_duplicate_id)
 
     if args.additional_attributes is not None:
-        merged_table = alternative_add_additional_attributes(
+        merged_table = add_additional_attributes(
             merged_table, args.gtf, args.feature_attribute,
             args.additional_attributes)
         names = args.additional_attributes + names
